@@ -102,8 +102,7 @@ HASH="$(shasum -a 256 "$ASAR_PATH" | awk '{print $1}')"
 /usr/libexec/PlistBuddy -c "Set :ElectronAsarIntegrity:Resources/app.asar:hash $HASH" "$PLIST_PATH"
 sync_macos_app_name
 sync_document_types
-/usr/libexec/PlistBuddy -c "Set :NSHumanReadableCopyright 'Vibe coded by Em'" "$PLIST_PATH" 2>/dev/null || \
-  /usr/libexec/PlistBuddy -c "Add :NSHumanReadableCopyright string 'Vibe coded by Em'" "$PLIST_PATH"
+/usr/libexec/PlistBuddy -c "Delete :NSHumanReadableCopyright" "$PLIST_PATH" 2>/dev/null || true
 /usr/libexec/PlistBuddy -c "Set :CFBundleShortVersionString '2.0.0'" "$PLIST_PATH"
 /usr/libexec/PlistBuddy -c "Set :CFBundleVersion '2.0.0'" "$PLIST_PATH"
 
