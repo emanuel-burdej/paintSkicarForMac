@@ -2,7 +2,7 @@
 
 Lightweight Paint style drawing app for macOS. Sketch, select, copy/paste, open images (including Finder **Open With**), and save locally. Dark and light mode. Multi-window.
 
-Everything runs on your Mac — nothing is uploaded anywhere.
+Everything runs on your Mac, nothing is uploaded anywhere.
 
 ## What you get
 
