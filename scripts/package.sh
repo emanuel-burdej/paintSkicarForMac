@@ -6,8 +6,8 @@ APP_NAME="Paint skicar for Mac"
 APP_PATH="/Applications/${APP_NAME}.app"
 RELEASE_DIR="$ROOT_DIR/release"
 DMG_PATH="$RELEASE_DIR/${APP_NAME}.dmg"
-DMG_RW="$(mktemp -t paint-skicar-rw.XXXXXX.dmg)"
-BACKGROUND_PNG="$(mktemp -t paint-skicar-bg.XXXXXX.png)"
+DMG_RW="$(mktemp -t paint-skicar-rw).dmg"
+BACKGROUND_PNG="$(mktemp -t paint-skicar-bg).png"
 MOUNT_DIR=""
 
 cleanup() {

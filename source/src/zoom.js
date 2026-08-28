@@ -48,14 +48,32 @@ function centerCanvasInWorkspace() {
     workspace.scrollTop += wrapRect.top + wrapRect.height / 2 - (viewRect.top + viewRect.height / 2);
   });
 }
+function isCanvasCornerScaleResize(edge) {
+  return shouldKeepResizeRatio() && isCornerResizeHandle(edge);
+}
+function isCanvasEdgeStretchResize(edge) {
+  return shouldKeepResizeRatio() && isEdgeResizeHandle(edge);
+}
+function syncCanvasDisplaySize(w, h) {
+  const z = zoom;
+  canvasWrapper.style.width = `${w * z}px`;
+  canvasWrapper.style.height = `${h * z}px`;
+  updateHandleMetrics();
+  sizeInfo.textContent = `${w} x ${h}px`;
+}
 function beginCanvasResize(edge, snapshot) {
   const r = canvasWrapper.getBoundingClientRect();
   const cs = getComputedStyle(canvasWrapper);
   shell.style.left = "0";
   shell.style.top = "0";
+  const scaleResize =
+    shouldKeepResizeRatio() &&
+    (isCornerResizeHandle(edge) || isEdgeResizeHandle(edge));
+  if (!scaleResize) clearCanvasScaleSource();
+  const source = scaleResize ? resolveCanvasScaleSource(snapshot) : snapshot;
   canvasResizeState = {
     edge,
-    snapshot,
+    snapshot: source,
     zoom,
     startW: canvas.width,
     startH: canvas.height,
@@ -89,20 +107,31 @@ function computeCanvasResizeFromMouse(e) {
     h = (s.anchorBottom - my) / z;
     offsetY = (s.anchorTop - my) / z;
   }
+  w = Math.max(1, Math.round(w));
+  h = Math.max(1, Math.round(h));
+  if (shouldKeepResizeRatio() && isCornerResizeHandle(edge)) {
+    const scaled = computeLockedAspectSize(s.startW, s.startH, w, h);
+    w = Math.max(1, Math.round(scaled.w));
+    h = Math.max(1, Math.round(scaled.h));
+    ({ w, h } = snapResizeDimensions(w, h, s.startW, s.startH));
+    offsetX = edge.includes("w") ? w - s.startW : 0;
+    offsetY = edge.includes("n") ? h - s.startH : 0;
+  }
   return {
-    w: Math.max(1, Math.round(w)),
-    h: Math.max(1, Math.round(h)),
+    w,
+    h,
     offsetX: Math.round(offsetX),
     offsetY: Math.round(offsetY),
   };
 }
-function anchorCanvasWrapperFromMouse(e) {
+function anchorCanvasWrapperForResize(e) {
   if (!canvasResizeState) return;
   const s = canvasResizeState;
+  const edge = s.edge;
   let mt = s.marginTop;
   let ml = s.marginLeft;
-  if (s.edge.includes("n")) mt = s.marginTop + (e.clientY - s.anchorTop);
-  if (s.edge.includes("w")) ml = s.marginLeft + (e.clientX - s.anchorLeft);
+  if (edge.includes("n")) mt = s.marginTop + (e.clientY - s.anchorTop);
+  if (edge.includes("w")) ml = s.marginLeft + (e.clientX - s.anchorLeft);
   canvasWrapper.style.marginTop = `${mt}px`;
   canvasWrapper.style.marginLeft = `${ml}px`;
 }
@@ -121,12 +150,28 @@ function applyCanvasResizePreview(e) {
   )
     return;
   s.preview = size;
+  if (isCanvasCornerScaleResize(s.edge)) {
+    previewCanvasScale(size.w, size.h, s.snapshot);
+    syncCanvasDisplaySize(size.w, size.h);
+    shell.style.left = "0";
+    shell.style.top = "0";
+    anchorCanvasWrapperForResize(e);
+    return;
+  }
+  if (isCanvasEdgeStretchResize(s.edge)) {
+    previewCanvasStretch(size.w, size.h, s.snapshot);
+    syncCanvasDisplaySize(size.w, size.h);
+    shell.style.left = "0";
+    shell.style.top = "0";
+    anchorCanvasWrapperForResize(e);
+    return;
+  }
   const z = s.zoom;
   canvasWrapper.style.width = `${size.w * z}px`;
   canvasWrapper.style.height = `${size.h * z}px`;
   shell.style.left = `${size.offsetX * z}px`;
   shell.style.top = `${size.offsetY * z}px`;
-  anchorCanvasWrapperFromMouse(e);
+  anchorCanvasWrapperForResize(e);
   sizeInfo.textContent = `${size.w} x ${size.h}px`;
 }
 function scheduleCanvasResizePreview(e) {
@@ -144,6 +189,29 @@ function commitCanvasResize() {
   const p = s.preview;
   shell.style.left = "0";
   shell.style.top = "0";
+  if (isCanvasCornerScaleResize(s.edge)) {
+    resizeCanvasScale(p.w, p.h, s.snapshot);
+    if (
+      canvasScaleSource &&
+      p.w === canvasScaleSource.width &&
+      p.h === canvasScaleSource.height
+    ) {
+      clearCanvasScaleSource();
+    }
+    return;
+  }
+  if (isCanvasEdgeStretchResize(s.edge)) {
+    resizeCanvasStretch(p.w, p.h, s.snapshot);
+    if (
+      canvasScaleSource &&
+      p.w === canvasScaleSource.width &&
+      p.h === canvasScaleSource.height
+    ) {
+      clearCanvasScaleSource();
+    }
+    return;
+  }
+  clearCanvasScaleSource();
   resizeCanvasFrame(p.w, p.h, s.snapshot, p.offsetX, p.offsetY, false);
 }
 function eventModifierFn(e) {

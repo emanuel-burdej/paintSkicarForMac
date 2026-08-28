@@ -1,6 +1,7 @@
 function applyLoadedImage(img, meta) {
   undoStack = [];
   redoStack = [];
+  clearAllScaleSources();
   currentFilePath = meta.path || null;
   currentFileName = meta.name;
   currentExtension = meta.ext;

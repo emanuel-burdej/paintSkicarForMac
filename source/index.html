@@ -12,19 +12,16 @@
         <section class="ribbon-group">
           <div class="ribbon-body file-group">
             <button id="openImageBtn" class="ribbon-btn large" type="button" title="Open">
-              <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6a2 2 0 0 1 2-2h3l2 2h7a2 2 0 0 1 2 2v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V6z"/></svg>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V7z"/></svg>
               <span>Open</span>
             </button>
             <button id="saveBtn" class="ribbon-btn large" type="button" title="Save">
-              <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><path d="M4 3h9l3 3v11H4V3z"/><path d="M7 3v5h6V3"/><rect x="7" y="12" width="6" height="5" rx="0.5"/></svg>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 3h11l3 3v15H5V3z"/><path d="M8 3v6h8V3"/><rect x="8" y="14" width="8" height="6" rx="0.5"/></svg>
               <span>Save</span>
             </button>
             <button id="saveAsBtn" class="ribbon-btn large" type="button" title="Save as">
-              <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><path d="M4 3h9l3 3v11H4V3z"/><path d="M7 3v5h6V3"/><path d="M8 15h4"/><path d="M10 13v4"/></svg>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 3h11l3 3v15H5V3z"/><path d="M8 3v6h8V3"/><path d="M12 14v6"/><path d="M9 17h6"/></svg>
               <span>Save as</span>
-            </button>
-            <button id="aboutBtn" class="ribbon-btn small file-about-btn" type="button" title="About Paint skicar for Mac">
-              <span>About</span>
             </button>
           </div>
           <div class="ribbon-label">File</div>
@@ -36,26 +33,38 @@
               <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="5" width="11" height="13" rx="1"/><path d="M7 5V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v1"/><path d="M8 10h4M8 13h4"/></svg>
               <span>Paste</span>
             </button>
-            <div class="mini-actions">
-              <button id="copyBtn" class="ribbon-btn small" type="button" title="Copy">
-                <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><rect x="7" y="7" width="10" height="11" rx="1"/><path d="M5 13H4a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h8a1 1 0 0 1 1 1v1"/></svg>
-                <span>Copy</span>
-              </button>
-            </div>
+            <button id="copyBtn" class="ribbon-btn large" type="button" title="Copy">
+              <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><rect x="7" y="7" width="10" height="11" rx="1"/><path d="M5 13H4a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h8a1 1 0 0 1 1 1v1"/></svg>
+              <span>Copy</span>
+            </button>
           </div>
           <div class="ribbon-label">Clipboard</div>
         </section>
 
-        <section class="ribbon-group">
+        <section class="ribbon-group image-section">
           <div class="ribbon-body image-group">
-            <button class="ribbon-btn large" data-tool="select" type="button" title="Select">
-              <span class="icon-select"></span>
-              <span>Select</span>
-            </button>
-            <button id="resizeOpenBtn" class="ribbon-btn large" type="button" title="Resize and skew">
-              <svg class="ribbon-icon" viewBox="0 -0.5 17 17" aria-hidden="true"><path fill="#D1E1F1" d="M8.994,12.967 C8.994,14.101 8.074,15.021 6.939,15.021 L3.03,15.021 C1.896,15.021 0.976,14.101 0.976,12.967 L0.976,9.057 C0.976,7.924 1.896,7.004 3.03,7.004 L6.939,7.004 C8.074,7.004 8.994,7.924 8.994,9.057 L8.994,12.967 Z"/><path fill="#4A86E8" d="M14.201,2.944 L15.372,5 C15.676,5 15.923,4.754 15.923,4.452 L15.942,0.648 C15.942,0.344 15.695,0.099 15.39,0.099 L11.625,0.082 C11.318,0.082 11.072,0.326 11.072,0.63 L13.086,1.836 L9.27,5.63 C9.115,5.782 9.039,5.982 9.039,6.181 C9.039,6.383 9.115,6.581 9.27,6.734 C9.579,7.04 10.079,7.04 10.387,6.734 L14.201,2.944 Z"/><path fill="#6B96C8" d="M15.04,7.021 L15.04,13.605 C15.04,14.4 14.397,15.046 13.604,15.046 L2.375,15.046 C1.584,15.046 0.939,14.4 0.939,13.605 L0.939,2.396 C0.939,1.602 1.584,0.956 2.375,0.956 L8.979,0.956 L8.979,0.026 L2.056,0.026 C0.927,0.026 0.007,0.947 0.007,2.079 L0.007,13.911 C0.007,15.042 0.927,15.964 2.056,15.964 L13.937,15.964 C15.068,15.964 15.988,15.042 15.988,13.911 L15.988,7.021 L15.04,7.021 Z"/></svg>
-              <span>Resize</span>
-            </button>
+            <div class="image-actions">
+              <button class="ribbon-btn large" data-tool="select" type="button" title="Select">
+                <span class="icon-select"></span>
+                <span>Select</span>
+              </button>
+              <button id="resizeOpenBtn" class="ribbon-btn large" type="button" title="Resize and skew">
+                <svg class="ribbon-icon" viewBox="0 0 32 32" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="15" width="14" height="14"/><polyline points="3,7 3,3 7,3"/><line x1="13" y1="3" x2="22" y2="3" stroke-dasharray="6,6"/><polyline points="25,3 29,3 29,7"/><line x1="29" y1="13" x2="29" y2="22" stroke-dasharray="6,6"/><polyline points="29,25 29,29 25,29"/><circle cx="7" cy="19" r="1"/><polyline points="3,26 10,22 14,25 17,23"/><polyline points="20,7 25,7 25,12"/><line x1="19" y1="13" x2="25" y2="7"/></svg>
+                <span>Resize</span>
+              </button>
+              <button id="rotateMenuBtn" class="ribbon-btn large" type="button" data-ribbon-menu="rotateMenu" title="Rotate selection or whole canvas">
+                <svg class="ribbon-icon ribbon-icon-filled" viewBox="0 0 1920 1920" aria-hidden="true"><path fill-rule="evenodd" clip-rule="evenodd" d="M639.999 209.777h116.019L621.665 75.425 697.09 0l263.111 263.111-260.196 260.196-75.425-75.424 131.439-131.439h-116.02c-176.731 0-320 143.269-320 320H213.332c0-235.642 191.025-426.667 426.667-426.667Zm0 643.556c0-117.82 95.512-213.333 213.333-213.333h853.338c117.82 0 213.33 95.513 213.33 213.333v853.337c0 117.82-95.51 213.33-213.33 213.33H853.332c-117.821 0-213.333-95.51-213.333-213.33V853.333Zm213.333-106.666h853.338c58.91 0 106.66 47.756 106.66 106.666v853.337c0 58.91-47.75 106.66-106.66 106.66H853.332c-58.91 0-106.667-47.75-106.667-106.66V853.333c0-58.91 47.757-106.666 106.667-106.666Z" fill="currentColor"/></svg>
+                <span>Rotate</span>
+              </button>
+              <button id="flipMenuBtn" class="ribbon-btn large" type="button" data-ribbon-menu="flipMenu" title="Flip selection or whole canvas">
+                <svg class="ribbon-icon ribbon-icon-filled" viewBox="0 0 24 24" aria-hidden="true"><path fill-rule="evenodd" clip-rule="evenodd" d="M2.14935 19.5257C2.33156 19.8205 2.65342 20 3 20H10C10.5523 20 11 19.5523 11 19V4.99998C11 4.5362 10.6811 4.13328 10.2298 4.02673C9.77838 3.92017 9.31298 4.13795 9.10557 4.55276L2.10557 18.5528C1.95058 18.8628 1.96714 19.2309 2.14935 19.5257ZM4.61804 18L9 9.23604V18H4.61804ZM13 19C13 19.5523 13.4477 20 14 20H21C21.3466 20 21.6684 19.8205 21.8507 19.5257C22.0329 19.2309 22.0494 18.8628 21.8944 18.5528L14.8944 4.55276C14.687 4.13795 14.2216 3.92017 13.7702 4.02673C13.3189 4.13328 13 4.5362 13 4.99998V19Z" fill="currentColor"/></svg>
+                <span>Flip</span>
+              </button>
+            </div>
+            <label class="mini-label check-row image-ratio-check" title="Corners: keep aspect ratio. Side handles: stretch image in one direction only (up/down/left/right).">
+              <input id="keepResizeRatio" type="checkbox" />
+              <span>Lock aspect ratio</span>
+            </label>
           </div>
           <div class="ribbon-label">Image</div>
         </section>
@@ -126,6 +135,16 @@
           </div>
           <div class="ribbon-label">Colors</div>
         </section>
+      </div>
+
+      <div id="rotateMenu" class="ribbon-menu hidden">
+        <button type="button" data-transform="rotate-right">Rotate right 90°</button>
+        <button type="button" data-transform="rotate-left">Rotate left 90°</button>
+        <button type="button" data-transform="rotate-180">Rotate 180°</button>
+      </div>
+      <div id="flipMenu" class="ribbon-menu hidden">
+        <button type="button" data-transform="flip-vertical">Flip vertical</button>
+        <button type="button" data-transform="flip-horizontal">Flip horizontal</button>
       </div>
 
       <div class="canvas-area">
@@ -254,7 +273,7 @@
       <div class="modal-panel about-dialog" role="dialog" aria-labelledby="aboutDialogTitle">
         <img class="about-icon" src="assets/icon.png" alt="" />
         <h2 id="aboutDialogTitle">Paint skicar for Mac</h2>
-        <p id="aboutVersion" class="about-version">Version 2.0.0</p>
+        <p id="aboutVersion" class="about-version">Version 2.1.0</p>
         <footer class="about-footer">
           <button id="aboutOkBtn" class="modal-btn primary" type="button">OK</button>
         </footer>

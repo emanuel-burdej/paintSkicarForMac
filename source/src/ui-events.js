@@ -106,30 +106,13 @@ window.onmousemove = (e) => {
     return;
   }
   if (pasteResize) {
-    const dx = (e.clientX - pasteResize.startX) / zoom,
-      dy = (e.clientY - pasteResize.startY) / zoom;
-    let x = pasteResize.x,
-      y = pasteResize.y,
-      w = pasteResize.w,
-      h = pasteResize.h;
-    if (pasteResize.corner.includes("e")) w = pasteResize.w + dx;
-    if (pasteResize.corner.includes("s")) h = pasteResize.h + dy;
-    if (pasteResize.corner.includes("w")) {
-      x = pasteResize.x + dx;
-      w = pasteResize.w - dx;
-    }
-    if (pasteResize.corner.includes("n")) {
-      y = pasteResize.y + dy;
-      h = pasteResize.h - dy;
-    }
-    w = Math.max(8, Math.round(w));
-    h = Math.max(8, Math.round(h));
-    x = Math.round(x);
-    y = Math.round(y);
-    pasteLayer.x = x;
-    pasteLayer.y = y;
-    pasteLayer.w = w;
-    pasteLayer.h = h;
+    const dx = (e.clientX - pasteResize.startX) / zoom;
+    const dy = (e.clientY - pasteResize.startY) / zoom;
+    const box = computeResizeBox(pasteResize, pasteResize.corner, dx, dy, 8);
+    pasteLayer.x = box.x;
+    pasteLayer.y = box.y;
+    pasteLayer.w = box.w;
+    pasteLayer.h = box.h;
     redrawPasteLayer();
     positionPasteLayer();
     return;
@@ -173,6 +156,14 @@ window.onmouseup = () => {
   if (pasteLayer) pasteLayer.drag = false;
   if (textLayer) textLayer.drag = false;
   pasteResize = null;
+  if (selectionResize && selection && selectionScaleSource) {
+    if (
+      selection.w === selectionScaleSource.sourceW &&
+      selection.h === selectionScaleSource.sourceH
+    ) {
+      clearSelectionScaleSource();
+    }
+  }
   selectionResize = null;
   drawing = false;
   if (canvasResizeRaf) {
@@ -203,6 +194,9 @@ saveBtn.onclick = saveFile;
 saveAsBtn.onclick = saveAsFile;
 darkModeToggle.onclick = toggleDarkMode;
 resizeOpenBtn.onclick = openResizeDialog;
+keepResizeRatio.onchange = () => {
+  if (!keepResizeRatio.checked) clearAllScaleSources();
+};
 resizeApplyBtn.onclick = applyResize;
 resizeCancelBtn.onclick = closeResizeDialog;
 resizeDialogClose.onclick = closeResizeDialog;
@@ -267,7 +261,44 @@ fontBackgroundFill.onchange = () => {
 copyBtn.onclick = () => {
   void copySelection();
 };
-aboutBtn.onclick = () => window.paintBridge?.showAbout?.();
+
+function closeRibbonMenus() {
+  document.querySelectorAll(".ribbon-menu").forEach((menu) => {
+    menu.classList.add("hidden");
+    menu.style.left = "";
+    menu.style.top = "";
+  });
+}
+
+function openRibbonMenu(btn, menu) {
+  const rect = btn.getBoundingClientRect();
+  menu.style.left = `${Math.round(rect.left)}px`;
+  menu.style.top = `${Math.round(rect.bottom + 2)}px`;
+  menu.classList.remove("hidden");
+}
+
+function initRibbonMenus() {
+  document.querySelectorAll("[data-ribbon-menu]").forEach((btn) => {
+    const menu = $(btn.dataset.ribbonMenu);
+    if (!menu) return;
+    btn.onclick = (e) => {
+      e.stopPropagation();
+      const willOpen = menu.classList.contains("hidden");
+      closeRibbonMenus();
+      if (willOpen) openRibbonMenu(btn, menu);
+    };
+  });
+  document.querySelectorAll(".ribbon-menu [data-transform]").forEach((item) => {
+    item.onclick = (e) => {
+      e.stopPropagation();
+      applyTransform(item.dataset.transform);
+      closeRibbonMenus();
+    };
+  });
+  document.addEventListener("click", closeRibbonMenus);
+  window.addEventListener("resize", closeRibbonMenus);
+}
+
 pasteBtn.onclick = async () => {
   if (!(await pasteFromSystemClipboard())) pasteSelection();
 };
@@ -529,6 +560,7 @@ window.paintBridge?.notifyRendererReady?.();
 
 renderSwatches();
 initTheme();
+initRibbonMenus();
 initSelectionHandles();
 setupCanvasContext(ctx);
 ctx.fillStyle = "white";

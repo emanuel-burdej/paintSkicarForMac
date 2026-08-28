@@ -32,11 +32,17 @@ function commitPasteLayer() {
 }
 function redrawPasteLayer() {
   const c = pasteLayer.canvas;
+  const sw = pasteLayer.sourceW ?? pasteLayer.source.width;
+  const sh = pasteLayer.sourceH ?? pasteLayer.source.height;
   c.width = pasteLayer.w;
   c.height = pasteLayer.h;
   const cctx = c.getContext("2d");
   setupCanvasContext(cctx);
   cctx.clearRect(0, 0, c.width, c.height);
+  if (pasteLayer.w === sw && pasteLayer.h === sh) {
+    cctx.drawImage(pasteLayer.source, 0, 0);
+    return;
+  }
   let tmp = pasteLayer.source;
   while (tmp.width * 0.5 > c.width && tmp.height * 0.5 > c.height) {
     const step = document.createElement("canvas");
@@ -80,6 +86,8 @@ function createMovableLayer(source, x = 0, y = 0, message = "") {
     el: layer,
     canvas: c,
     source,
+    sourceW: source.width,
+    sourceH: source.height,
     x,
     y,
     w: source.width,

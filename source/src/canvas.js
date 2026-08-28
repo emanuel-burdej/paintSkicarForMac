@@ -23,6 +23,75 @@ function drawScaledHighQuality(source, w, h) {
   setupCanvasContext(ctx);
   ctx.drawImage(tmp, 0, 0, w, h);
 }
+function clearCanvasScaleSource() {
+  canvasScaleSource = null;
+}
+function clearSelectionScaleSource() {
+  selectionScaleSource = null;
+}
+function clearAllScaleSources() {
+  clearCanvasScaleSource();
+  clearSelectionScaleSource();
+}
+function resolveCanvasScaleSource(current) {
+  if (!canvasScaleSource) {
+    canvasScaleSource = document.createElement("canvas");
+    canvasScaleSource.width = current.width;
+    canvasScaleSource.height = current.height;
+    canvasScaleSource.getContext("2d").drawImage(current, 0, 0);
+  }
+  return canvasScaleSource;
+}
+function drawSourceScaled(source, w, h) {
+  if (w === source.width && h === source.height) {
+    ctx.drawImage(source, 0, 0);
+    return;
+  }
+  drawScaledHighQuality(source, w, h);
+}
+function drawSourceStretched(source, w, h) {
+  if (w === source.width && h === source.height) {
+    ctx.drawImage(source, 0, 0);
+    return;
+  }
+  ctx.drawImage(source, 0, 0, source.width, source.height, 0, 0, w, h);
+}
+function previewCanvasScale(w, h, source) {
+  w = Math.max(1, Math.round(w));
+  h = Math.max(1, Math.round(h));
+  canvas.width = w;
+  canvas.height = h;
+  setupCanvasContext(ctx);
+  ctx.fillStyle = "white";
+  ctx.fillRect(0, 0, w, h);
+  drawSourceScaled(source, w, h);
+}
+function previewCanvasStretch(w, h, source) {
+  w = Math.max(1, Math.round(w));
+  h = Math.max(1, Math.round(h));
+  canvas.width = w;
+  canvas.height = h;
+  setupCanvasContext(ctx);
+  ctx.fillStyle = "white";
+  ctx.fillRect(0, 0, w, h);
+  drawSourceStretched(source, w, h);
+}
+function resizeCanvasStretch(w, h, source) {
+  commitTextLayer();
+  commitPasteLayer();
+  previewCanvasStretch(w, h, source);
+  hideSelection();
+  setZoom(zoom);
+  updateInfo();
+}
+function resizeCanvasScale(w, h, source) {
+  commitTextLayer();
+  commitPasteLayer();
+  previewCanvasScale(w, h, source);
+  hideSelection();
+  setZoom(zoom);
+  updateInfo();
+}
 function resizeCanvas(w, h) {
   commitTextLayer();
   commitPasteLayer();

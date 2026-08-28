@@ -103,8 +103,8 @@ HASH="$(shasum -a 256 "$ASAR_PATH" | awk '{print $1}')"
 sync_macos_app_name
 sync_document_types
 /usr/libexec/PlistBuddy -c "Delete :NSHumanReadableCopyright" "$PLIST_PATH" 2>/dev/null || true
-/usr/libexec/PlistBuddy -c "Set :CFBundleShortVersionString '2.0.0'" "$PLIST_PATH"
-/usr/libexec/PlistBuddy -c "Set :CFBundleVersion '2.0.0'" "$PLIST_PATH"
+/usr/libexec/PlistBuddy -c "Set :CFBundleShortVersionString '2.1.0'" "$PLIST_PATH"
+/usr/libexec/PlistBuddy -c "Set :CFBundleVersion '2.1.0'" "$PLIST_PATH"
 
 codesign --force --deep --sign - "$APP_PATH" >/dev/null 2>&1
 /System/Library/Frameworks/CoreServices.framework/Frameworks/LaunchServices.framework/Support/lsregister -f -R -trusted "$APP_PATH" >/dev/null 2>&1 || true
