@@ -21,6 +21,8 @@ function pushUndo() {
 function restoreFromDataURL(u) {
   removeTextLayer();
   removePasteLayer();
+  const scrollLeft = workspace.scrollLeft;
+  const scrollTop = workspace.scrollTop;
   const img = new Image();
   img.onload = () => {
     canvas.width = img.width;
@@ -29,7 +31,13 @@ function restoreFromDataURL(u) {
     ctx.fillRect(0, 0, canvas.width, canvas.height);
     ctx.drawImage(img, 0, 0);
     hideSelection();
-    setZoom(zoom);
+    setZoom(zoom, { preserveView: true });
+    workspace.scrollLeft = scrollLeft;
+    workspace.scrollTop = scrollTop;
+    requestAnimationFrame(() => {
+      workspace.scrollLeft = scrollLeft;
+      workspace.scrollTop = scrollTop;
+    });
     updateInfo();
   };
   img.src = u;

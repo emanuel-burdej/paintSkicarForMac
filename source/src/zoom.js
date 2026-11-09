@@ -9,7 +9,7 @@ function updateHandleMetrics() {
   shell.style.setProperty("--handle-local-radius", radius);
 }
 
-function setZoom(z) {
+function setZoom(z, opts = {}) {
   zoom = Math.max(0.1, Math.min(8, z));
   const displayW = canvas.width * zoom;
   const displayH = canvas.height * zoom;
@@ -24,7 +24,9 @@ function setZoom(z) {
   updateSelectionOverlay();
   positionPasteLayer();
   positionTextLayer();
-  requestAnimationFrame(centerCanvasInWorkspace);
+  if (!opts.preserveView) {
+    requestAnimationFrame(centerCanvasInWorkspace);
+  }
 }
 function getShellMousePos(e) {
   const r = shell.getBoundingClientRect();

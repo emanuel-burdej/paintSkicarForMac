@@ -100,6 +100,24 @@ function positionTextLayer() {
   textLayer.el.style.top = `${textLayer.y}px`;
 }
 
+function getTextContentOrigin() {
+  if (!textLayer) return { x: 0, y: 0 };
+  const layerStyle = getComputedStyle(textLayer.el);
+  const editorStyle = getComputedStyle(textLayer.editor);
+  return {
+    x:
+      textLayer.x +
+      (parseFloat(layerStyle.paddingLeft) || 0) +
+      (parseFloat(editorStyle.borderLeftWidth) || 0) +
+      (parseFloat(editorStyle.paddingLeft) || 0),
+    y:
+      textLayer.y +
+      (parseFloat(layerStyle.paddingTop) || 0) +
+      (parseFloat(editorStyle.borderTopWidth) || 0) +
+      (parseFloat(editorStyle.paddingTop) || 0),
+  };
+}
+
 function createTextLayer(x, y) {
   commitPasteLayer();
   commitTextLayer();
@@ -114,11 +132,22 @@ function createTextLayer(x, y) {
   editor.spellcheck = false;
   layer.appendChild(moveHandle);
   layer.appendChild(editor);
+  shell.appendChild(layer);
+  const layerStyle = getComputedStyle(layer);
+  const editorStyle = getComputedStyle(editor);
+  const padX =
+    (parseFloat(layerStyle.paddingLeft) || 0) +
+    (parseFloat(editorStyle.borderLeftWidth) || 0) +
+    (parseFloat(editorStyle.paddingLeft) || 0);
+  const padY =
+    (parseFloat(layerStyle.paddingTop) || 0) +
+    (parseFloat(editorStyle.borderTopWidth) || 0) +
+    (parseFloat(editorStyle.paddingTop) || 0);
   textLayer = {
     el: layer,
     editor,
-    x: Math.round(x),
-    y: Math.round(y),
+    x: Math.round(x - padX),
+    y: Math.round(y - padY),
     drag: false,
     dx: 0,
     dy: 0,
@@ -138,7 +167,6 @@ function createTextLayer(x, y) {
   };
   editor.onmousedown = (e) => e.stopPropagation();
   updateTextLayerStyle();
-  shell.appendChild(layer);
   positionTextLayer();
   updateTextContextBar();
   requestAnimationFrame(() => editor.focus());
@@ -168,9 +196,14 @@ function commitTextLayer() {
     pushUndo();
     const size = getFontSize();
     const align = getTextAlign();
-    const boxW = Math.max(textLayer.editor.offsetWidth, 8);
+    const origin = getTextContentOrigin();
+    const editorStyle = getComputedStyle(textLayer.editor);
+    const padL = parseFloat(editorStyle.paddingLeft) || 0;
+    const padR = parseFloat(editorStyle.paddingRight) || 0;
+    const boxW = Math.max(textLayer.editor.clientWidth - padL - padR, 8);
     const lines = text.split("\n");
     const lineHeight = size * 1.2;
+    const halfLeading = (lineHeight - size) / 2;
     const blockH = lines.length * lineHeight;
 
     ctx.font = textLayerFont();
@@ -182,13 +215,13 @@ function commitTextLayer() {
 
     if (fontBackgroundFill?.checked) {
       ctx.fillStyle = secondaryColor.value;
-      ctx.fillRect(textLayer.x, textLayer.y, boxW, blockH + 2);
+      ctx.fillRect(origin.x, origin.y, boxW, blockH + 2);
       ctx.fillStyle = colorPicker.value;
     }
 
     lines.forEach((line, index) => {
-      const y = textLayer.y + index * lineHeight;
-      let x = textLayer.x;
+      const y = origin.y + halfLeading + index * lineHeight;
+      let x = origin.x;
       if (align === "center") x += boxW / 2;
       else if (align === "right") x += boxW;
       drawCommittedTextLine(line, x, y, size);

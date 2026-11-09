@@ -1,8 +1,11 @@
 {
   "name": "paint-skicar-for-mac",
-  "version": "2.1.0",
+  "version": "2.4.1",
   "description": "Paint skicar for Mac desktop app",
   "main": "main.js",
-  "author": "Em B",
-  "private": true
+  "author": {
+    "name": "Em B"
+  },
+  "private": true,
+  "scripts": {}
 }

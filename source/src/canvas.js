@@ -150,6 +150,55 @@ function expandCanvasTo(w, h) {
   setZoom(zoom);
   updateInfo();
 }
+
+function frameCanvasWithBackground() {
+  commitTextLayer();
+  commitPasteLayer();
+  hideSelection();
+  pushUndo();
+  const old = copyCurrentCanvas();
+  const edge = Math.max(old.width, old.height);
+  // Soft product-style shadow (matches reference screenshots)
+  const shadowBlur = Math.max(22, Math.min(36, Math.round(edge * 0.028)));
+  const shadowOffsetY = Math.max(4, Math.min(8, Math.round(shadowBlur * 0.22)));
+  const pad = Math.max(
+    Math.round(edge * 0.12),
+    shadowBlur + shadowOffsetY + 20,
+  );
+  const nw = old.width + pad * 2;
+  const nh = old.height + pad * 2;
+  canvas.width = nw;
+  canvas.height = nh;
+  setupCanvasContext(ctx);
+  ctx.fillStyle = "rgb(224, 238, 251)";
+  ctx.fillRect(0, 0, nw, nh);
+
+  const shadow = document.createElement("canvas");
+  shadow.width = nw;
+  shadow.height = nh;
+  const sctx = shadow.getContext("2d");
+  setupCanvasContext(sctx);
+  // Subtle ambient shadow first, then a slightly tighter drop
+  sctx.shadowColor = "rgba(15, 23, 42, 0.10)";
+  sctx.shadowBlur = Math.round(shadowBlur * 1.35);
+  sctx.shadowOffsetX = 0;
+  sctx.shadowOffsetY = Math.round(shadowOffsetY * 0.5);
+  sctx.drawImage(old, pad, pad);
+  sctx.shadowColor = "rgba(15, 23, 42, 0.14)";
+  sctx.shadowBlur = shadowBlur;
+  sctx.shadowOffsetY = shadowOffsetY;
+  sctx.drawImage(old, pad, pad);
+  sctx.shadowColor = "transparent";
+  sctx.shadowBlur = 0;
+  sctx.shadowOffsetY = 0;
+  sctx.drawImage(old, pad, pad);
+
+  ctx.drawImage(shadow, 0, 0);
+  clearAllScaleSources();
+  fitImageToWorkspace();
+  updateInfo();
+  showToast("Canvas framed.");
+}
 function resizeActiveLayer(w, h) {
   if (!pasteLayer) {
     showToast("Select or paste an image first.");

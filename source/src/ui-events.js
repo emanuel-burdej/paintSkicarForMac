@@ -64,9 +64,15 @@ canvas.onmousedown = (e) => {
     return;
   }
   if (tool === "picker") {
-    colorPicker.value = hexFromPixel(p.x, p.y);
-    updateTextLayerStyle();
-    showToast(`Color picked: ${colorPicker.value}`);
+    pickColorWithToolEyeDropper().then((usedLoupe) => {
+      if (usedLoupe) return;
+      const hex = hexFromPixel(p.x, p.y);
+      colorPicker.value = hex;
+      updateTextLayerStyle();
+      copyColorToClipboard(hex).then((ok) => {
+        showToast(ok ? `Copied ${hex}` : `Color picked: ${hex}`);
+      });
+    });
     return;
   }
   if (tool === "fill") {
@@ -90,6 +96,7 @@ canvas.onmousedown = (e) => {
       "hexagon",
       "star",
       "arrow",
+      "callout",
       "select",
     ].includes(tool)
   ) {
@@ -144,6 +151,10 @@ window.onmousemove = (e) => {
     lastY = p.y;
     return;
   }
+  if (tool === "callout") {
+    previewCalloutDrag(startX, startY, p.x, p.y);
+    return;
+  }
   if (snapshot) ctx.putImageData(snapshot, 0, 0);
   if (tool === "select") {
     const sp = getRawMousePos(e);
@@ -152,7 +163,7 @@ window.onmousemove = (e) => {
   }
   drawShape(startX, startY, p.x, p.y, tool);
 };
-window.onmouseup = () => {
+window.onmouseup = (e) => {
   if (pasteLayer) pasteLayer.drag = false;
   if (textLayer) textLayer.drag = false;
   pasteResize = null;
@@ -165,6 +176,26 @@ window.onmouseup = () => {
     }
   }
   selectionResize = null;
+  if (drawing && tool === "callout") {
+    drawing = false;
+    const p = e ? getMousePos(e) : { x: lastX, y: lastY };
+    const tipX = startX;
+    const tipY = startY;
+    const snapped = snapCalloutEnd(tipX, tipY, p.x, p.y);
+    const ballX = snapped.x;
+    const ballY = snapped.y;
+    resetCalloutPreviewState();
+    if (Math.hypot(ballX - tipX, ballY - tipY) < 8) {
+      if (snapshot) ctx.putImageData(snapshot, 0, 0);
+      snapshot = null;
+      return;
+    }
+    if (snapshot) ctx.putImageData(snapshot, 0, 0);
+    drawCallout(tipX, tipY, ballX, ballY, "");
+    beginCalloutLabel(tipX, tipY, ballX, ballY, snapshot);
+    return;
+  }
+  resetCalloutPreviewState();
   drawing = false;
   if (canvasResizeRaf) {
     cancelAnimationFrame(canvasResizeRaf);
@@ -192,6 +223,7 @@ document.querySelectorAll(".canvas-resize").forEach(
 openImageBtn.onclick = openImage;
 saveBtn.onclick = saveFile;
 saveAsBtn.onclick = saveAsFile;
+$("frameCanvasBtn").onclick = frameCanvasWithBackground;
 darkModeToggle.onclick = toggleDarkMode;
 resizeOpenBtn.onclick = openResizeDialog;
 keepResizeRatio.onchange = () => {
@@ -332,7 +364,7 @@ workspace.addEventListener(
 workspace.addEventListener(
   "mousedown",
   (e) => {
-    if (e.target === workspace) {
+    if (e.target === workspace || e.target === workspaceStage) {
       commitTextLayer();
       commitPasteLayer();
       hideSelection();
@@ -349,6 +381,14 @@ window.addEventListener("blur", () => {
   fnZoomDown = false;
 });
 window.addEventListener("paste", (e) => {
+  if (isEditingTextLayer() || isTextBarFocused()) {
+    const text = e.clipboardData?.getData("text/plain");
+    if (text != null && text !== "") {
+      e.preventDefault();
+      document.execCommand("insertText", false, text);
+    }
+    return;
+  }
   const file = [...(e.clipboardData?.files || [])].find((f) =>
     f.type.startsWith("image/"),
   );
@@ -471,6 +511,7 @@ window.addEventListener("blur", stopAllArrowHold);
 
 window.onkeydown = async (e) => {
   if (isTextBarFocused()) return;
+  if (calloutDraft?.input && document.activeElement === calloutDraft.input) return;
   if (e.key === "Escape" && !resizeDialog.classList.contains("hidden")) {
     closeResizeDialog();
     return;
@@ -514,14 +555,17 @@ window.onkeydown = async (e) => {
     return;
   }
   if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "c") {
+    if (isEditingTextLayer() || isTextBarFocused()) return;
     e.preventDefault();
     copySelection();
   }
   if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "x") {
+    if (isEditingTextLayer() || isTextBarFocused()) return;
     e.preventDefault();
     copySelection(true);
   }
   if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "v") {
+    if (isEditingTextLayer() || isTextBarFocused()) return;
     e.preventDefault();
     if (!(await pasteFromSystemClipboard())) pasteSelection();
   }
@@ -536,6 +580,10 @@ window.onkeydown = async (e) => {
     deleteActiveSelection();
   }
   if (e.key === "Escape") {
+    if (calloutDraft) {
+      commitCalloutDraft(false);
+      return;
+    }
     removeTextLayer();
     removePasteLayer();
     hideSelection();

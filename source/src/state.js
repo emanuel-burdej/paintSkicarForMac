@@ -33,6 +33,21 @@ const colorPicker = $("colorPicker"),
   aboutDialogBackdrop = $("aboutDialogBackdrop"),
   aboutOkBtn = $("aboutOkBtn"),
   aboutVersion = $("aboutVersion"),
+  colorPanel = $("colorPanel"),
+  colorSvArea = $("colorSvArea"),
+  colorSvCursor = $("colorSvCursor"),
+  colorPreview = $("colorPreview"),
+  colorHueBar = $("colorHueBar"),
+  colorHueThumb = $("colorHueThumb"),
+  colorEyeDropperBtn = $("colorEyeDropperBtn"),
+  colorHexFields = $("colorHexFields"),
+  colorRgbFields = $("colorRgbFields"),
+  colorHexInput = $("colorHexInput"),
+  colorRInput = $("colorRInput"),
+  colorGInput = $("colorGInput"),
+  colorBInput = $("colorBInput"),
+  colorModeCycleBtn = $("colorModeCycleBtn"),
+  colorCopyBtn = $("colorCopyBtn"),
   skewHorizontalInput = $("skewHorizontalInput"),
   skewVerticalInput = $("skewVerticalInput"),
   sizeInfo = $("sizeInfo"),
@@ -137,8 +152,11 @@ const toolNames = {
   hexagon: "hexagon",
   star: "star",
   arrow: "arrow",
+  callout: "callout",
   text: "text",
 };
+let calloutSeq = 0;
+let calloutDraft = null;
 
 function isFontBold() {
   return fontBold?.classList.contains("active");

@@ -60,6 +60,10 @@
                 <svg class="ribbon-icon ribbon-icon-filled" viewBox="0 0 24 24" aria-hidden="true"><path fill-rule="evenodd" clip-rule="evenodd" d="M2.14935 19.5257C2.33156 19.8205 2.65342 20 3 20H10C10.5523 20 11 19.5523 11 19V4.99998C11 4.5362 10.6811 4.13328 10.2298 4.02673C9.77838 3.92017 9.31298 4.13795 9.10557 4.55276L2.10557 18.5528C1.95058 18.8628 1.96714 19.2309 2.14935 19.5257ZM4.61804 18L9 9.23604V18H4.61804ZM13 19C13 19.5523 13.4477 20 14 20H21C21.3466 20 21.6684 19.8205 21.8507 19.5257C22.0329 19.2309 22.0494 18.8628 21.8944 18.5528L14.8944 4.55276C14.687 4.13795 14.2216 3.92017 13.7702 4.02673C13.3189 4.13328 13 4.5362 13 4.99998V19Z" fill="currentColor"/></svg>
                 <span>Flip</span>
               </button>
+              <button id="frameCanvasBtn" class="ribbon-btn large" type="button" title="Expand canvas with blue background and shadow">
+                <svg class="ribbon-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="2"/><rect x="7" y="7" width="10" height="10" rx="1"/><path d="M7 7h10v10H7z" opacity="0.25" fill="currentColor" stroke="none"/></svg>
+                <span>Frame</span>
+              </button>
             </div>
             <label class="mini-label check-row image-ratio-check" title="Corners: keep aspect ratio. Side handles: stretch image in one direction only (up/down/left/right).">
               <input id="keepResizeRatio" type="checkbox" />
@@ -85,6 +89,14 @@
             </button>
             <button class="tool-btn" data-tool="picker" type="button" title="Color picker">
               <svg class="tool-icon" viewBox="0 -0.5 17 17" aria-hidden="true"><path fill="#4A86E8" d="M15.308,4.434 C16.22,3.523 16.118,1.939 15.079,0.9 C14.038,-0.139 12.455,-0.242 11.545,0.67 L10.364,1.853 L14.128,5.617 L15.308,4.434 Z"/><path fill="#B0B0B0" d="M5.468,14.276 L11.615,8.128 L12.387,8.9 L13.971,7.314 L8.662,2.005 L7.077,3.589 L7.85,4.362 L1.702,10.508 L0.02,15.201 L0.774,15.955 L5.468,14.276 Z M8.916,5.428 L10.551,7.064 L4.289,13.324 L1.695,14.284 L2.654,11.688 L8.916,5.428 Z"/></svg>
+            </button>
+            <button class="tool-btn" data-tool="callout" type="button" title="Callout (drag, then type letter or number)">
+              <svg class="tool-icon" viewBox="0 0 24 24" aria-hidden="true">
+                <circle cx="5" cy="12" r="2.15" fill="#7c3aed"/>
+                <path d="M7.4 12h6.1" stroke="#7c3aed" stroke-width="2.1" stroke-linecap="round"/>
+                <circle cx="17.2" cy="12" r="5.1" fill="#7c3aed"/>
+                <path fill="#fff" d="M15.55 9.35h1.55c.95 0 1.55.55 1.55 1.35 0 .58-.28 1.02-.78 1.22l.95 2.08h-1.28l-.82-1.88h-.42v1.88h-1.15V9.35zm1.15 1.95h.32c.32 0 .52-.18.52-.45s-.2-.45-.52-.45h-.32v.9z"/>
+              </svg>
             </button>
           </div>
           <div class="ribbon-label">Tools</div>
@@ -164,27 +176,10 @@
             type="number"
             min="8"
             max="999"
+            step="1"
             value="22"
-            list="fontSizeOptions"
             title="Font size"
           />
-          <datalist id="fontSizeOptions">
-            <option value="8"></option>
-            <option value="10"></option>
-            <option value="11"></option>
-            <option value="12"></option>
-            <option value="14"></option>
-            <option value="16"></option>
-            <option value="18"></option>
-            <option value="20"></option>
-            <option value="22"></option>
-            <option value="24"></option>
-            <option value="26"></option>
-            <option value="28"></option>
-            <option value="36"></option>
-            <option value="48"></option>
-            <option value="72"></option>
-          </datalist>
           <div class="text-style-group">
             <button id="fontBold" class="ctx-toggle" type="button" title="Bold"><strong>B</strong></button>
             <button id="fontItalic" class="ctx-toggle" type="button" title="Italic"><em>I</em></button>
@@ -204,7 +199,7 @@
           </div>
           <label class="text-bg-fill">
             <input id="fontBackgroundFill" type="checkbox" />
-            Background fill
+            Background fill with color 2
           </label>
         </div>
 
@@ -273,7 +268,7 @@
       <div class="modal-panel about-dialog" role="dialog" aria-labelledby="aboutDialogTitle">
         <img class="about-icon" src="assets/icon.png" alt="" />
         <h2 id="aboutDialogTitle">Paint skicar for Mac</h2>
-        <p id="aboutVersion" class="about-version">Version 2.1.0</p>
+        <p id="aboutVersion" class="about-version">Version 2.4.1</p>
         <footer class="about-footer">
           <button id="aboutOkBtn" class="modal-btn primary" type="button">OK</button>
         </footer>
@@ -346,6 +341,52 @@
         </footer>
       </div>
     </div>
+    <div id="colorPanel" class="color-panel hidden" aria-hidden="true">
+      <div id="colorSvArea" class="color-sv-area" title="Saturation and brightness">
+        <div id="colorSvCursor" class="color-sv-cursor"></div>
+      </div>
+      <div class="color-tools-row">
+        <button id="colorEyeDropperBtn" class="color-tool-btn" type="button" title="Pick color from screen">
+          <svg viewBox="0 0 20 20" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M3 17l5-5"/>
+            <path d="M11.5 3.5l5 5-7 7H4.5V10.5l7-7z"/>
+            <path d="M13 5l2 2"/>
+          </svg>
+        </button>
+        <div id="colorPreview" class="color-preview-swatch"></div>
+        <div id="colorHueBar" class="color-hue-bar" title="Hue">
+          <div id="colorHueThumb" class="color-hue-thumb"></div>
+        </div>
+      </div>
+      <div class="color-values-row">
+        <div id="colorHexFields" class="color-fields">
+          <label class="color-field">
+            <input id="colorHexInput" type="text" spellcheck="false" maxlength="7" />
+            <span>HEX</span>
+          </label>
+        </div>
+        <div id="colorRgbFields" class="color-fields hidden">
+          <label class="color-field">
+            <input id="colorRInput" type="number" min="0" max="255" />
+            <span>R</span>
+          </label>
+          <label class="color-field">
+            <input id="colorGInput" type="number" min="0" max="255" />
+            <span>G</span>
+          </label>
+          <label class="color-field">
+            <input id="colorBInput" type="number" min="0" max="255" />
+            <span>B</span>
+          </label>
+        </div>
+        <button id="colorModeCycleBtn" class="color-cycle-btn" type="button" title="Switch HEX / RGB">
+          <svg viewBox="0 0 12 16" width="10" height="14" aria-hidden="true">
+            <path fill="currentColor" d="M6 1L1 6h10L6 1zm0 14l5-5H1l5 5z"/>
+          </svg>
+        </button>
+        <button id="colorCopyBtn" class="color-copy-btn" type="button" title="Copy color">Copy</button>
+      </div>
+    </div>
     <div id="toast" class="toast"></div>
     <script src="src/state.js"></script>
     <script src="src/history.js"></script>
@@ -358,6 +399,7 @@
     <script src="src/files.js"></script>
     <script src="src/fill-tools.js"></script>
     <script src="src/selection.js"></script>
+    <script src="src/color-dialog.js"></script>
     <script src="src/ui-events.js"></script>
   </body>
 </html>
